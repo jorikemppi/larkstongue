@@ -178,6 +178,8 @@ def compressAsset(asset, args):
 	
 def encodeOutputCartData(args):
 
+    # encode compressed data into the .p8 format
+
 	global compressedAssets
 	global outputGfxArea
 	global outputMapArea
@@ -198,7 +200,7 @@ def encodeOutputCartData(args):
 	for asset in compressedAssets:
 		cartDataString += asset.data
 		
-	#encode gfx
+	# encode __gfx__
 	
 	gfxDataString = cartDataString[:16384]
 	while len(gfxDataString) % 2 != 0:
@@ -219,7 +221,7 @@ def encodeOutputCartData(args):
 	
 	if not args.gfx_only:
 	
-		#encode map
+		# encode __map__
 		
 		if len(cartDataString) > 16384:
 		
@@ -235,7 +237,7 @@ def encodeOutputCartData(args):
 					outputLine = outputLine + "0"
 				outputMapArea.append(outputLine + "\n")
 			
-		#encode gff
+		# encode __gff__
 		
 		if len(cartDataString) > 24576:
 		
@@ -252,7 +254,7 @@ def encodeOutputCartData(args):
 				
 		if not args.spare_music:
 		
-			#encode music
+			# encode __music__
 		
 			if len(cartDataString) > 25088:
 			
@@ -281,7 +283,7 @@ def encodeOutputCartData(args):
 					flagNibbleInHex = format(int(flagNibble), "02x")
 					outputMusicArea.append(flagNibbleInHex + " " + strChannels + "\n")
 			
-			#encode sfx
+			# encode __sfx__
 		
 			if len(cartDataString) > 25600:
 			
@@ -318,6 +320,8 @@ def encodeOutputCartData(args):
 def doPack(args):
 
 	print("Larkstongue v0.0.1-alpha")
+    
+    # set global variables
 	
 	global totalSize
 	global totalSizeWithoutHilbert
@@ -380,6 +384,8 @@ def doPack(args):
 	usesHuffman = False
 	
 	assetList = readAssets(args.input, True)
+    
+    # check for duplicate names
 	
 	dupeList = []
 	for asset in assetList:
@@ -397,6 +403,8 @@ def doPack(args):
 	totalRawSize = 0
 	for asset in assetList:
 		totalRawSize += asset.size
+        
+    # compress assets
 
 	print("Compressing " + str(amountOfAssets) + " assets, total size " + str(totalRawSize) + " nibbles")
 	
@@ -471,6 +479,8 @@ def doPack(args):
 
 	file.write(commandStringData + "\n" + commandStringLoaderCall + "\ndata, asset_list = nil, nil\nmemset(0, 0, " + str(usableCartData / 2) + ")\ncls()\npal()")
 	file.close()
+    
+    # write includes and cart data to target cart
 	
 	try:
 		file = open(args.output, "r")
@@ -583,6 +593,8 @@ def doPack(args):
 	for line in cartText:
 		file.write(line)
 	file.close()
+    
+    # output summary
 	
 	spaceSavings = 100 * (1 - totalSize / totalRawSize)
 		
