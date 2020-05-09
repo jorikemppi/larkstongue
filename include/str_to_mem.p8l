@@ -1,0 +1,21 @@
+-- str_to_mem(start, data, stride): writes data to ram.
+
+--  start = address to start writing from
+--   data = a table of strings, containing bytes in hexadecimal
+-- stride = stride in ram between separate strings in the table. defaults to 64
+
+-- uses: hex_to_dec.p8l
+
+function str_to_mem(start, data, stride)
+
+	stride = stride or 64
+	
+	y = 0
+	for chunk in all(data) do
+		for i = 1, #chunk, 2 do
+			poke(start + (i - 1) / 2 + y * stride, hex_to_dec(chunk, i, 1))
+		end
+		y += 1
+	end
+	
+end

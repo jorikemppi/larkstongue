@@ -1,0 +1,59 @@
+-- hilbert_unwrap(): unwraps a bitmap mapped to the hilbert curve by larkstongue.
+
+function rect_subdivide(x, y, width, height)
+
+	local square_size
+	bounding_size, square_size, curve = min(width, height), 128, {{0, 0}}
+	
+	if (bounding_size == 0) return
+
+	while square_size > bounding_size do
+		square_size /= 2
+	end
+ 
+	repeat
+ 
+		side_length, readx, ready = sqrt(#curve), x, y
+
+		if square_size > 1 then
+			for i = 1, #curve do
+				add(curve, {curve[i][2], curve[i][1] + side_length})
+			end
+  
+			for i = #curve, 1, 0xffff do
+				add(curve, {2 * side_length - curve[i][1] - 1, curve[i][2]})
+			end  
+		end
+  
+		for co in all(curve) do
+			pset(co[1] + x, co[2] + y + 1, sget(readx, ready))
+			readx += 1
+			if readx == square_size + x then
+				readx = x
+				ready += 1
+			end
+			co[1], co[2] = co[2], co[1]   
+		end
+  
+		if square_size <= 1 then
+			break
+		end
+  
+	until side_length == square_size / 2 
+
+	rect_subdivide(x + square_size, y, width - square_size, height)
+	rect_subdivide(x, y + square_size, square_size, height - square_size)
+
+end
+
+function hilbert_unwrap()
+
+	str_to_mem(0, asset)
+
+	rect_subdivide(0, 0, current_asset[2], current_asset[3]+1)
+
+	for i = 0, current_asset[3] + 1 do
+		asset[i] = mem_to_str(0x6000 + i * 64, current_asset[2] / 2)
+	end
+	
+end

@@ -1,0 +1,10 @@
+-- hex_to_dec(hexstr, s, e): takes a string containing a hexadecimal number, returns that number in decimal.
+-- hexstr = the input number
+--      s = the starting point of the substring to convert. defaults to 1
+--      e = the length of the substring to convert minus 1. defaults to 0
+
+function hex_to_dec(hexstr, s, e)
+	s = s or 1
+	e = e or 0
+	return tonum("0x"..sub(hexstr, s, s + e))
+end

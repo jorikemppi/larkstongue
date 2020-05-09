@@ -1,0 +1,17 @@
+-- rle_decomp(str): decompresses an asset compressed by rle_comp.p8l or larkstongue.
+
+-- uses: hex_to_dec.p8l
+
+function rle_decomp(str)
+	local output = ""
+	i = 1
+	while i < #str do
+		length = hex_to_dec(str, i)
+		i += 1
+		for i2 = 0, length do
+			output = output..sub(str, i, i)
+		end
+	i += 1
+	end
+	return output
+end

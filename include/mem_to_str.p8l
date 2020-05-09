@@ -1,0 +1,14 @@
+-- mem_to_str(start, length): reads ram contents and returns them as a string of hexadecimal digits.
+
+-- start: the address to start reading from
+-- length: the amount of bytes to read
+
+function mem_to_str(start, length)
+	finish = start + length
+	output = ""
+	while start < finish do
+		output = output..sub(tostr(peek(start),true), 5, 6)
+		start += 1
+	end
+	return output
+end
